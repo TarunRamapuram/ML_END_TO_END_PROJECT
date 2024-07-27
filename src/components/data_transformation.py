@@ -11,6 +11,8 @@ from src.exception import CustomException
 from src.logger import logging
 from src.utils import save_object
 
+
+
 @dataclass
 class DataTransformationConfig:
     preprocessor_obj_file_path = os.path.join('artifacts',"preprocessor.pkl")
@@ -62,6 +64,13 @@ class DataTransformation:
                     ("cat_pipline",cat_pipline,categorical_columns)
                 ]
             )
+            """
+            The ColumnTransformer takes a list of tuples, each containing three elements:
+            Name: A string name for the transformer.
+            Transformer Object: The actual transformer (e.g., a pipeline) to be applied to the specified columns.
+            Columns: A list of column names (or indices) that the transformer should be applied to.
+            
+            """
 
 
             return preprocessor
@@ -112,7 +121,7 @@ class DataTransformation:
             return (
                 train_arr,
                 test_arr,
-                self.data_transformation_config.preprocessor_obj_file_path,
+                self.data_transformation_config.preprocessor_obj_file_path
             )
 
         except Exception as e:
