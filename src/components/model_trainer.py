@@ -5,13 +5,19 @@ from dataclasses import dataclass
 from catboost import CatBoostRegressor
 from sklearn.ensemble import (
     AdaBoostRegressor,
-    RandomForestRegressor
+    GradientBoostingRegressor,
+    RandomForestRegressor,
 )
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
+
+from src.exception import CustomException
+from src.logger import logging
+
+from src.utils import save_object,evaluate_models
 
 from src.exception import CustomException
 from src.logger import logging
@@ -39,24 +45,21 @@ class ModelTrainer:
             )
 
             models = {
-                "Linear Regression": LinearRegression(),
-                "Lasso": Lasso(),
-                "Ridge": Ridge(),
-                "K-Neighbors Regressor": KNeighborsRegressor(),
+                "Random Forest": RandomForestRegressor(),
                 "Decision Tree": DecisionTreeRegressor(),
-                "Random Forest Regressor": RandomForestRegressor(),
-                "XGBRegressor": XGBRegressor(), 
+                "Gradient Boosting": GradientBoostingRegressor(),
+                "Linear Regression": LinearRegression(),
+                "XGBRegressor": XGBRegressor(),
                 "CatBoosting Regressor": CatBoostRegressor(verbose=False),
-                "AdaBoost Regressor": AdaBoostRegressor()
+                "AdaBoost Regressor": AdaBoostRegressor(),
             }
-
             params={
                 "Decision Tree": {
                     'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
                     # 'splitter':['best','random'],
                     # 'max_features':['sqrt','log2'],
                 },
-                "Random Forest Regressor":{
+                "Random Forest":{
                     # 'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
                  
                     # 'max_features':['sqrt','log2',None],
@@ -71,9 +74,6 @@ class ModelTrainer:
                     'n_estimators': [8,16,32,64,128,256]
                 },
                 "Linear Regression":{},
-                "Lasso":{},
-                "Ridge":{},
-                "K-Neighbors Regressor": {},
                 "XGBRegressor":{
                     'learning_rate':[.1,.01,.05,.001],
                     'n_estimators': [8,16,32,64,128,256]
